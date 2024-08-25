@@ -20,6 +20,7 @@ function KaKaoMap() {
   const navigate = useNavigate();
   const placeService = useRef(null);
   const location = useLocation();
+  const [isSearchBarVisible, setIsSearchBarVisible] = useState(false);
 
   const { posts, fetchPosts } = usePost();
 
@@ -249,22 +250,37 @@ function KaKaoMap() {
     currentMarkerRef.current = marker;
   };
 
+  const toggleSearchBar = () => {
+    setIsSearchBarVisible(!isSearchBarVisible);
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles.sidebar}>
-        <form onSubmit={handleSearch} className={styles.searchForm}>
-          <input
-            type="text"
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            placeholder="장소 검색"
-            className={styles.searchInput}
-          />
-          <button type="submit" className={styles.searchButton}>
-            <img src={SearchIcon} alt="Search" className={styles.searchIcon} />
-          </button>
-        </form>
-        {searchResults.length > 0 ? (
+      <div className={styles.navbar}>
+        <button onClick={toggleSearchBar} className={styles.navButton}>
+          <img src={SearchIcon} alt="Search" className={styles.searchIcon} />
+        </button>
+        {isSearchBarVisible && (
+          <form onSubmit={handleSearch} className={styles.searchForm}>
+            <input
+              type="text"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              placeholder="장소 검색"
+              className={styles.searchInput}
+            />
+            <button type="submit" className={styles.searchButton}>
+              <img
+                src={SearchIcon}
+                alt="Search"
+                className={styles.searchIcon}
+              />
+            </button>
+          </form>
+        )}
+      </div>
+      {isSearchBarVisible && searchResults.length > 0 && (
+        <div className={styles.searchResultsContainer}>
           <ul className={styles.searchResultList}>
             {searchResults.map((item, index) => (
               <li
@@ -279,12 +295,8 @@ function KaKaoMap() {
               </li>
             ))}
           </ul>
-        ) : (
-          <div className={styles.noResults}>
-            <p>검색어를 입력해주세요.</p>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
       <div className={styles.mapContainer}>
         <div id="map" className={styles.map}></div>
         <div className={styles.buttonContainer}>
