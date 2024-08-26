@@ -20,12 +20,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd frontend-v2-main
+        cd frontend-v2
         npm install  # 필요한 npm 패키지 설치
 
     - name: Build the app
       run: |
-        cd frontend-v2-main
+        cd frontend-v2
         npm run build  # 애플리케이션 빌드
 
     - name: Deploy to Azure Static Web Apps
