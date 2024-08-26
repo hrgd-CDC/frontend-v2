@@ -20,12 +20,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd frontend-v2
+        cd hrgd-CDC/frontend-v2
         npm install  # 필요한 npm 패키지 설치
 
     - name: Build the app
       run: |
-        cd frontend-v2
+        cd hrgd-CDC/frontend-v2
         npm run build  # 애플리케이션 빌드
 
     - name: 'Login via Azure CLI'
