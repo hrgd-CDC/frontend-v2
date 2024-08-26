@@ -20,7 +20,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd frontend
+        cd frontend-v2
         npm install  # 필요한 npm 패키지 설치
 
     - name: Build the app
@@ -44,4 +44,4 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'myWebApp'
-        package: '${{ github.workspace }}/frontend/build'  # 빌드된 파일 배포
+        package: '${{ github.workspace }}/frontend-v2/build'  # 빌드된 파일 배포
