@@ -34,5 +34,5 @@ jobs:
         azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}  # 배포 토큰 사용
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         action: "upload"
-        app_location: "/frontend-v2-main/build"  # 빌드된 파일 위치
+        app_location: "/frontend-v2/build"  # 빌드된 파일 위치
         api_location: ""  # API 위치가 없으면 빈 문자열로 설정
