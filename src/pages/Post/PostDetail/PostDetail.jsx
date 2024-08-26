@@ -102,7 +102,7 @@ function PostDetail({ post, onClose, isAuthor, id }) {
       <div className={styles.addressBar}>
         <span>{post.address}</span>
       </div>
-      <img src={dummy} alt="Image" className={styles.image} />
+      <img src={post.imageUrl} alt="Image" className={styles.image} />
       <div className={styles.content}>
         <h2 className={styles.title}>{post.title}</h2>
         <p className={styles.description}>{post.content}</p>

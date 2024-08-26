@@ -58,7 +58,6 @@ function PostView() {
 
 const PostItem = ({ post, onClick }) => {
   const { likeCount } = useLike(post.id);
-  console.log(post);
 
   return (
     <div className={styles.post} onClick={onClick}>
