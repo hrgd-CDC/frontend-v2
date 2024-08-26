@@ -1,0 +1,59 @@
+# 이 워크플로는 GitHub에서 인증되지 않은 작업을 사용합니다.
+# 작업은 타사에서 제공하며
+# 별도의 서비스 약관, 개인정보처리방침, 지원 설명서에서 규정됩니다.
+# 참조하세요.
+
+# 커밋 SHA에 작업을 고정하는 것이 좋습니다.
+# 최신 버전을 얻으려면 SHA를 업데이트해야 합니다.
+# 태그 또는 분기를 참조할 수도 있지만 경고 없이 작업이 변경될 수 있습니다.
+
+name: Deploy web app to Azure Static Web Apps
+
+env:
+  APP_LOCATION: "/" # location of your client code
+  API_LOCATION: "" # location of your api source code - optional
+  OUTPUT_LOCATION: "build" # location of client code build output
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  build_and_deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Build And Deploy
+        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: ${{ env.APP_LOCATION }}
+          api_location: ${{ env.API_LOCATION }}
+          output_location: ${{ env.OUTPUT_LOCATION }}
+
+  close_pull_request:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request
+    steps:
+      - name: Close Pull Request
+        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: "close"
