@@ -12,22 +12,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Azure CLI
-        uses: azure/cli@v1
-        with:
-          azcliversion: latest
-
       - name: Login to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy Bicep
-        run: |
-          az deployment group create \
-            --resource-group myResourceGroup \
-            --template-file infrastructure/main.bicep \
-            --parameters location="CentralUS"
+      - name: Deploy Bicep to Azure
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az deployment group create \
+              --resource-group rg-CDC-team \
+              --template-file ./infrastructure/main.bicep \
+              --parameters location="KoreaCentral"
 
   build_and_deploy_app:
     needs: deploy_infrastructure
@@ -49,7 +46,7 @@ jobs:
 
       - name: Deploy to Azure App Service
         run: |
-          az webapp deploy --resource-group myResourceGroup \
+          az webapp deploy --resource-group rg-CDC-team \
                            --name my-react-app \
                            --src-path ./build \
                            --type static
