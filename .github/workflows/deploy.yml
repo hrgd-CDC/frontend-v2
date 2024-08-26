@@ -18,6 +18,11 @@ jobs:
       with:
         node-version: '16'  # Node.js 버전 설정
 
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm install  # 필요한 npm 패키지 설치
+
     - name: Build the app
       run: |
         cd frontend
