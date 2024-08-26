@@ -1,52 +1,47 @@
-name: Deploy React App to Azure App Service
+name: Deploy to Azure using Bicep
 
 on:
   push:
     branches:
-      - main  # main 브랜치에 푸시될 때 실행
+      - main  # main 브랜치에 푸시할 때 실행
 
 jobs:
-  deploy_infrastructure:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Check out the code
+      uses: actions/checkout@v3
 
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # Node.js 버전 설정
 
-      - name: Deploy Bicep to Azure
-        uses: azure/cli@v1
-        with:
-          inlineScript: |
-            az deployment group create \
-              --resource-group rg-CDC-team \
-              --template-file ./infrastructure/main.bicep \
-              --parameters location="KoreaCentral"
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm install  # 필요한 npm 패키지 설치
 
-  build_and_deploy_app:
-    needs: deploy_infrastructure
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Build the app
+      run: |
+        cd frontend
+        npm run build  # 애플리케이션 빌드
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  # Azure 서비스 주체 자격 증명 사용
 
-      - name: Install dependencies
-        run: npm install
+    - name: Deploy infrastructure using Bicep
+      run: |
+        az deployment group create \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --template-file main.bicep \
+          --parameters appServicePlanName='myAppServicePlan' webAppName='myWebApp'
 
-      - name: Build the app
-        run: npm run build
-
-      - name: Deploy to Azure App Service
-        run: |
-          az webapp deploy --resource-group rg-CDC-team \
-                           --name my-react-app \
-                           --src-path ./build \
-                           --type static
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'myWebApp'
+        package: '${{ github.workspace }}/frontend/build'  # 빌드된 파일 배포
